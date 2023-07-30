@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BuberDinner.Api.Controllers
 {
-    [ApiController]
-    public class ErrorsController : ControllerBase
+ 
+    public class ErrorsController : ApiController
     {
         [Route("/error")]
         public IActionResult Get()
