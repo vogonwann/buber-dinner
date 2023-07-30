@@ -1,4 +1,6 @@
 using BuberDinner.Application.Services.Authentication;
+using BuberDinner.Application.Services.Authentication.Common;
+using BuberDinner.Application.Services.Authentication.Queries;
 using BuberDinner.Contracts.Authentication;
 using BuberDinner.Domain.Common.Errors;
 using ErrorOr;
@@ -9,17 +11,18 @@ namespace BuberDinner.Api.Controllers;
 [Route("auth")]
 public class AuthenticationController : ApiController
 {
-    private readonly IAuthenticationService _authenticationService;
+    private readonly IAuthenticationCommandService _authenticationCommandService;
+    private readonly IAuthenticationQueryService _authenticationQueryService;
 
-    public AuthenticationController(IAuthenticationService authenticationService)
+    public AuthenticationController(IAuthenticationCommandService authenticationService)
     {
-        _authenticationService = authenticationService;
+        _authenticationCommandService = authenticationService;
     }
 
     [HttpPost("register")]
     public IActionResult Register(RegisterRequest request)
     {
-        ErrorOr<AuthenticationResult> authResult = _authenticationService.Register(
+        ErrorOr<AuthenticationResult> authResult = _authenticationCommandService.Register(
             request.Email,
             request.Password,
             request.FirstName,
@@ -33,7 +36,7 @@ public class AuthenticationController : ApiController
     [HttpPost("login")]
     public IActionResult Login(LoginRequest request)
     {
-        var loginResult = _authenticationService.Login(request.Email, request.Password);
+        var loginResult = _authenticationQueryService.Login(request.Email, request.Password);
 
         if (loginResult.IsError && loginResult.FirstError == Errors.Authentication.InvalidCredentials) {
             return Problem(
